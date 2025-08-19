@@ -19,7 +19,6 @@ export function RefreshOnParamChange({
     .join("|");
 
   useEffect(() => {
-    // Skip the first render to prevent double-fetch on initial navigation
     if (previousSignatureRef.current && previousSignatureRef.current !== signature) {
       router.refresh();
     }
