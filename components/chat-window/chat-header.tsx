@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { AvatarWithSocial } from "./avatar-with-social";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface ChatHeaderProps {
   title: string;
@@ -11,8 +11,11 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ title }: ChatHeaderProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("user_id");
+  
   const openNewChat = () => {
-    router.push("/");
+    router.push(`/?user_id=${userId}`);
   };
   return (
     <div className="flex items-center justify-between rounded-[16px] bg-white p-3 lg:p-4 flex-wrap">

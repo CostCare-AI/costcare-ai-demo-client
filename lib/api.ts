@@ -16,7 +16,7 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(
+    console.error(
       `API ${path} failed: ${res.status} ${res.statusText} ${text}`
     );
   }
@@ -34,7 +34,7 @@ async function postJsonNoStore<T>(path: string, body: unknown): Promise<T> {
   });
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(
+    console.error(
       `API ${path} failed: ${res.status} ${res.statusText} ${text}`
     );
   }
