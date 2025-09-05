@@ -14,12 +14,13 @@ export function RefreshOnParamChange({
   const router = useRouter();
   const previousSignatureRef = useRef<string>("");
 
-  const signature = watchKeys
-    .map((key) => params.get(key) || "")
-    .join("|");
+  const signature = watchKeys.map((key) => params.get(key) || "").join("|");
 
   useEffect(() => {
-    if (previousSignatureRef.current && previousSignatureRef.current !== signature) {
+    if (
+      previousSignatureRef.current &&
+      previousSignatureRef.current !== signature
+    ) {
       router.refresh();
     }
     previousSignatureRef.current = signature;
@@ -27,5 +28,3 @@ export function RefreshOnParamChange({
 
   return null;
 }
-
-
