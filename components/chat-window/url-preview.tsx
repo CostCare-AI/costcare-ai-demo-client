@@ -3,17 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { extractFirstUrl, getDomain, getYouTubeId, isImageUrl } from "../../lib/url";
+import { extractAllUrls, getDomain, getYouTubeId, isImageUrl } from "../../lib/url";
 
 interface UrlPreviewProps {
   text: string;
 }
 
-export function UrlPreview({ text }: UrlPreviewProps) {
-  const firstUrl = extractFirstUrl(text);
-  if (!firstUrl) return null;
-
-  const ytId = getYouTubeId(firstUrl);
+function SingleUrlPreview({ url }: { url: string }) {
+  const ytId = getYouTubeId(url);
   if (ytId) {
     return (
       <div className="mt-2">
@@ -29,11 +26,11 @@ export function UrlPreview({ text }: UrlPreviewProps) {
   }
 
   const [imageError, setImageError] = useState(false);
-  if (isImageUrl(firstUrl) && !imageError) {
+  if (isImageUrl(url) && !imageError) {
     return (
       <div className="mt-2 relative w-full aspect-video rounded-md overflow-hidden">
         <Image
-          src={firstUrl}
+          src={url}
           alt="Link preview"
           fill
           unoptimized
@@ -45,7 +42,7 @@ export function UrlPreview({ text }: UrlPreviewProps) {
     );
   }
 
-  const domain = getDomain(firstUrl);
+  const domain = getDomain(url);
   const faviconSrc = domain
     ? `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`
     : "";
@@ -53,7 +50,7 @@ export function UrlPreview({ text }: UrlPreviewProps) {
 
   return (
     <Link
-      href={firstUrl}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
       className="mt-2 block border border-[#E6E8F0] rounded-md p-2 hover:bg-[#F6F7FB] transition-colors"
@@ -72,10 +69,22 @@ export function UrlPreview({ text }: UrlPreviewProps) {
         ) : null}
         <div className="min-w-0">
           <div className="text-sm text-[#111827] truncate">{domain}</div>
-          <div className="text-xs text-[#6B7280] truncate">{firstUrl}</div>
+          <div className="text-xs text-[#6B7280] truncate">{url}</div>
         </div>
       </div>
     </Link>
+  );
+}
+
+export function UrlPreview({ text }: UrlPreviewProps) {
+  const urls = extractAllUrls(text);
+  if (!urls.length) return null;
+  return (
+    <>
+      {urls.map((u, i) => (
+        <SingleUrlPreview url={u} key={`${u}-${i}`} />
+      ))}
+    </>
   );
 }
 
