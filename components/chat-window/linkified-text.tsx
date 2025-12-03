@@ -10,26 +10,28 @@ export function LinkifiedText({ text }: LinkifiedTextProps) {
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
   const parts: ReactNode[] = [];
   let lastIndex = 0;
+  let match: RegExpExecArray | null;
 
-  text.replace(urlRegex, (match, _g1, _g2, offset) => {
-    if (lastIndex < (offset ?? 0)) {
-      parts.push(text.slice(lastIndex, offset));
+  while ((match = urlRegex.exec(text)) !== null) {
+    const matchIndex = match.index;
+    const matchedText = match[0];
+    if (matchIndex > lastIndex) {
+      parts.push(text.slice(lastIndex, matchIndex));
     }
-    const href = normalizeUrl(match);
+    const href = normalizeUrl(matchedText);
     parts.push(
       <Link
-        key={`${offset}-${match}`}
+        key={`${matchIndex}-${matchedText}`}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
         className="text-[#2563eb] underline break-words"
       >
-        {match}
+        {matchedText}
       </Link>
     );
-    lastIndex = (offset ?? 0) + match.length;
-    return match;
-  });
+    lastIndex = matchIndex + matchedText.length;
+  }
 
   if (lastIndex < text.length) {
     parts.push(text.slice(lastIndex));

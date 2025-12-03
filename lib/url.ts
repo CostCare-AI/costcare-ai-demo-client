@@ -3,12 +3,24 @@ export function normalizeUrl(raw: string): string {
   return raw.startsWith("http") ? raw : `https://${raw}`;
 }
 
-export function extractFirstUrl(text: string): string | null {
-  if (!text) return null;
-  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/i;
-  const match = text.match(urlRegex);
-  if (!match) return null;
-  return normalizeUrl(match[0]);
+export function extractAllUrls(text: string): string[] {
+  if (!text) return [];
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+  const urls: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = urlRegex.exec(text)) !== null) {
+    urls.push(normalizeUrl(match[0]));
+  }
+
+  const seen = new Set<string>();
+  const unique: string[] = [];
+  for (const u of urls) {
+    if (!seen.has(u)) {
+      seen.add(u);
+      unique.push(u);
+    }
+  }
+  return unique;
 }
 
 export function isImageUrl(url: string): boolean {
@@ -43,5 +55,3 @@ export function getDomain(url: string): string {
     return url;
   }
 }
-
-
